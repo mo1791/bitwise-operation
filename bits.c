@@ -249,7 +249,3 @@ NODISCARD uint32_t high_nibble(uint32_t number) {
 	// left nibble
 	return number & 0x0f;
 }
-
-NODISCARD uint32_t concate(uint32_t lhs, uint32_t rhs) {
-	return lhs * pow(0xa, ceil(log10(rhs))) + rhs;
-}
