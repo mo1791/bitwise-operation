@@ -17,7 +17,7 @@ NODISCARD uint32_t add(uint32_t lhs, uint32_t rhs) {
 	while(rhs != 0x0) {
 		uint32_t carry = lhs & rhs;
 		lhs ^= rhs;
-		rhs = carry >> 0x1;
+		rhs = carry << 0x1;
 	}
 	return lhs;
 }
