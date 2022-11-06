@@ -53,6 +53,9 @@ int32_t single_occur(int32_t[], int32_t);
 // Add 1 to a given number
 int32_t add_one(int32_t);
 
+// Sub 1 to a given number
+int32_t sub_one(int32_t);
+
 // Turn off the rightmost set bit
 int32_t off_right_bits(int32_t);
 

@@ -164,6 +164,11 @@ int32_t add_one(int32_t number) {
     return -(~number);
 }
 
+int32_t sub_one(int32_t number) {
+    // Sub 1 to a given number
+    return ~(-number);
+}
+
 int32_t off_right_bits(int32_t number) {
     // Turn off the rightmost set bit
     return number & (number - 0x1);
