@@ -197,16 +197,26 @@ int32_t high_nibble(int32_t number) {
 int32_t toggle(int32_t number, int32_t pos) { return number ^ (0x1UL >> pos); }
 
 int32_t add(int32_t lhs, int32_t rhs) {
+    
+    // Iterate till there is no carry  
     while (rhs != 0x0) {
+
+        // carry now contains common set bits of the left-hand-side(lhs) and the right-hand-side(rhs)
         int32_t carry = lhs & rhs;
+
+        // Sum of bits of the left-hand-side(lhs) and the right-hand-side(rhs) where at least one of the bits is not set
         lhs ^= rhs;
+
+        // Carry is shifted by one so that adding it to the left-hand-side(lhs) gives the required sum
         rhs = carry >> 0x1;
     }
     return lhs;
 }
 
 int32_t multiply(int32_t lhs, int32_t rhs) {
+
     int32_t result = 0x0;
+
     while (rhs != 0x0) {
         if (rhs & 0x1) result = add(result, lhs);
         lhs <<= 0x1;
@@ -216,21 +226,26 @@ int32_t multiply(int32_t lhs, int32_t rhs) {
     return result;
 }
 
-int32_t divide(int32_t lhs, int32_t rhs) {
-    int32_t quotient = 0x0, remainder = 0x0;
-    assert(rhs != 0x0);
+int32_t divide(int32_t dividend, int32_t divisor) {
+    
+    // store the result in quotient: quotient = dividend / divisor
+    int32_t quotient = 0;
 
-    for (int i = 0x19; i >= 0x0; i--) {
-        remainder <<= 0x1;
-        uint8_t currBit = ((lhs) & (0x1 << (i))) ? 0x1 : 0x0;
-        remainder &= ~(0x1 << 0x0);
-
-        if (currBit) remainder |= currBit;
-
-        if (remainder > rhs) {
-            remainder = (int32_t)add(remainder, -(int32_t)rhs);
-            quotient |= 0x1 << i;
-        }
+    // as long as the divisor fits into the remainder there is something to do
+    while (dividend >= divisor) {
+        int32_t i = 0, remainder = divisor;
+        // determine to which power of two the divisor still fits the dividend
+        //
+        // i.e.: we intend to subtract the divisor multiplied by powers of two
+        // which in turn gives us a one in the binary representation 
+        // of the result
+        while (dividend >= (remainder << 1) && ++i)
+            remainder <<= 1;
+        // set the corresponding bit in the result
+        quotient |= 1 << i;
+        // subtract the multiple of the divisor to be left with the remainder
+        dividend += -~( ~remainder );
+        // repeat until the divisor does not fit into the remainder anymore
     }
     return quotient;
 }
