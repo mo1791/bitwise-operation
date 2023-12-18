@@ -1,6 +1,8 @@
 #include <assert.h>
-#include <bits.h>
 #include <limits.h>
+
+#include <bits.h>
+
 
 int32_t sign( int32_t number )
 {
@@ -8,7 +10,7 @@ int32_t sign( int32_t number )
     return ( number != 0x0 ) | ( number >> ( sizeof(int32_t) * CHAR_BIT - 0x1 ) );
 }
 
-int32_t isOpposit( int32_t lhs, int32_t rhs )
+bool isOpposit( int32_t lhs, int32_t rhs )
 {
     // Detect if two int32_tegers have opposite signs
     return ( ( lhs ^ rhs ) < 0x0 );
@@ -33,106 +35,107 @@ int32_t min( int32_t lhs, int32_t rhs )
     return ( rhs ^ ( ( lhs ^ rhs ) & -( lhs < rhs ) ) );
 }
 
-Bool isPowerOf2(int32_t num)
+Bool isPowerOf2(int32_t number)
 {
     // Determining if an int32_teger is a power of 2
-    return ( num && !( num & ( num - 0x1 ) ) );
+    return ( number && !( number & ( number - 0x1 ) ) );
 }
 
-int32_t set(int32_t num, int32_t pos)
+int32_t set(int32_t number, int32_t pos)
 {
     // set a bit at nth position in number
-    return ( num | ( 0x1 << pos ) );
+    return ( number | ( 0x1 << pos ) );
 }
 
-int32_t unset(int32_t num, int32_t pos)
+int32_t unset(int32_t number, int32_t pos)
 {
     // unset/clear a bit at n’th position in the number
-    return ( num & ( ~( 0x1 << pos ) ) );
+    return ( number & ( ~( 0x1 << pos ) ) );
 }
 
-Bool isSet(int32_t num, int32_t pos)
+Bool isSet(int32_t number, int32_t pos)
 {
     // Checking if bit at nth position is set or unset
-    return ( num & ( 0x1 << pos ) );
+    return ( number & ( 0x1 << pos ) );
 }
 
-int32_t lowset_set_bit(int32_t num)
+int32_t lowset_set_bit(int32_t number)
 {
     // Getting lowest set bit of a number
-    return ( num & ( -num ) );
+    return ( number & ( -number ) );
 }
 
-int32_t countBits(int32_t v)
+int32_t countBits(int32_t number)
 {
     // Counting bits set in 14, 24, or 32-bit words using 64-bit instructions
     
-    int32_t acc;  // c accumulates the total bits set in v
+    int32_t acc;  // c accumulates the total bits set in number
     
-    // at most 32-bit values in v:
-    acc  = ( ( ( v & 0xfff ) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f );
-    acc += ( ( ( ( v & 0xfff000 ) >> 0xc ) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f );
-    acc += ( ( ( v >> 0x18 ) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f );
+    // at most 32-bit values in number:
+    acc  = ( ( ( number & 0xfff ) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f );
+    acc += ( ( ( ( number & 0xfff000 ) >> 0xc ) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f );
+    acc += ( ( ( number >> 0x18 ) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f );
 
     return acc;
 }
 
-int32_t reverse_bit(int32_t num)
+int32_t reverse_bit(int32_t number)
 {
     // Reverse bits the obvious way
-    int32_t rev = num;  // r will be reversed bits of v; first get LSB of v
-    int32_t siz = sizeof(num) * CHAR_BIT - 0x1;  // extra shift needed at end
+    int32_t rev = number;  // rev will be reversed bits of number; first get LSB of number
+    int32_t siz = sizeof(number) * CHAR_BIT - 0x1;  // extra shift needed at end
     
-    for ( num >>= 0x1; num; num >>= 0x1 )
+    for ( number >>= 0x1; number; number >>= 0x1 )
     {
         rev <<= 0x1;
-        rev  |= num & 0x1;
+        rev  |= number & 0x1;
         siz--;
     }
 
-    return rev << siz;  // shift when v's highest bits are zero
+    return rev << siz;  // shift when number's highest bits are zero
 }
 
-int32_t reverse_bits_in_byte(int32_t num)
+int32_t reverse_bits_in_byte(int32_t number)
 {
     // Reverse the bits in a byte with 3 operations (64-bit multiply and modulus division):
-    return ( ( num * 0x0202020202ULL & 0x010884422010ULL) % 0x3FF );
+    return ( ( number * 0x0202020202ULL & 0x010884422010ULL) % 0x3FF );
 }
 
-int32_t log_2(int32_t num)
+int32_t log_2(int32_t number)
 {
     // Find the int32_teger log base 2 of an int32_teger with an 64-bit IEEE float
-    union {
+    union
+    {
         int32_t u[0x2];
         double d;
-    } tmp;  // temp
+    } tmp;
 
     tmp.u[__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__] = 0x43300000;
-    tmp.u[__FLOAT_WORD_ORDER__ != __ORDER_LITTLE_ENDIAN__] = num;
+    tmp.u[__FLOAT_WORD_ORDER__ != __ORDER_LITTLE_ENDIAN__] = number;
     
     tmp.d -= 4503599627370496.0;
     
     return ( ( tmp.u[__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__] >> 0x14 ) - 0x3FF );
 }
 
-int32_t ln(int32_t num)
+int32_t ln(int32_t number)
 {
     // Find the log base 2 of an N-bit int32_teger in O(lg(N)) operations
     const int32_t b[] = { 0x2, 0xC, 0xF0, 0xFF00, 0xFFFF0000 };
     const int32_t S[] = { 0x1, 0x2, 0x4, 0x8, 0x10 };
 
-    register int32_t res = 0x0;  // result of log2(v) will go here
+    int32_t result = 0x0;  // result of log2(v) will go here
 
     for ( int32_t i = 0x4; i >= 0x0; --i )  // unroll for speed...
     {
-        if ( num & b[i] )
+        if ( number & b[i] )
         {
-            num >>= S[i];
-            res  |= S[i];
+            number >>= S[i];
+            result  |= S[i];
         }
     }
 
-    return res;
+    return result;
 }
 
 int32_t single_occur(int32_t arr[], int32_t size)
@@ -201,16 +204,18 @@ int32_t off_right_bits(int32_t number)
     return ( number & ( number - 0x1 ) );
 }
 
-int32_t power_of_4(int32_t num)
+int32_t power_of_4(int32_t number)
 {
     // Find whether a given number is a power of 4 or not
-    return ( ( num != 0x0 ) && ( ( num & ( num - 0x1 ) ) == 0x0 ) && !( num & 0xAAAAAAAA ) );
+    return ( ( number != 0x0 ) && 
+             ( ( number & ( number - 0x1 ) ) == 0x0 ) && 
+              !( number & 0xAAAAAAAA ) );
 }
 
-int32_t toggle_all_except_kth(int32_t number, int32_t k)
+int32_t toggle_all_except_kth(int32_t number, int32_t pos)
 {
-    // Toggle all the bits of a number except k-th bit.
-    return ~( number ^ ( 0x1 >> k ) );
+    // Toggle all the bits of a number except pos-th bit.
+    return ~( number ^ ( 0x1 >> pos ) );
 }
 
 int32_t low_nibble(int32_t number)
@@ -225,10 +230,10 @@ int32_t high_nibble(int32_t number)
     return ( number & 0x0f );
 }
 
-int32_t toggle(int32_t number, int32_t k)
+int32_t toggle(int32_t number, int32_t pos)
 {
-    // toggle bit at pos k 
-    return ( number ^ ( 0x1UL >> k ) );
+    // toggle bit at pos pos 
+    return ( number ^ ( 0x1UL >> pos ) );
 }
 
 int32_t add(int32_t lhs, int32_t rhs)
@@ -244,7 +249,7 @@ int32_t add(int32_t lhs, int32_t rhs)
         lhs ^= rhs;
 
         // Carry is shifted by one so that adding it to the left-hand-side(lhs) gives the required sum
-        rhs = carry >> 0x1;
+        rhs = carry << 0x1;
     }
 
     return lhs;
@@ -252,20 +257,20 @@ int32_t add(int32_t lhs, int32_t rhs)
 
 int32_t multiply(int32_t lhs, int32_t rhs)
 {
-    int32_t res = 0x0;
+    int32_t result = 0x0;
 
     while ( rhs != 0x0 )
     {
         if ( rhs & 0x1 )
         {
-            res = add(res, lhs);
+            result = add(res, lhs);
         }
 
         lhs <<= 0x1;
         rhs >>= 0x1;
     }
 
-    return res;
+    return result;
 }
 
 int32_t divide(int32_t dividend, int32_t divisor)

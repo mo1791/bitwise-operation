@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum { False = 0, True = 1 } Bool;
 
@@ -6,7 +7,7 @@ typedef enum { False = 0, True = 1 } Bool;
 int32_t sign(int32_t);
 
 // Detect if two int32_tegers have opposite signs
-int32_t isOpposit(int32_t, int32_t);
+bool isOpposit(int32_t, int32_t);
 
 // Compute the int32_teger absolute value (abs) without branching
 int32_t abs(int32_t);
